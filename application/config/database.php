@@ -50,7 +50,7 @@ $active_record = TRUE;
 
 $db['default']['username'] = 'root';
 $db['default']['password'] = '';
-$db['default']['database'] = 'mundosoft5.0';
+$db['default']['database'] = 'pos';
 $db['default']['dbdriver'] = 'mysqli';
 
 $db['default']['dbprefix'] = '';
