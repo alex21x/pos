@@ -1,0 +1,17 @@
+
+********* 
+ruc: 10458793587
+clave :Quioliver0
+
+id usuario secundario :UDAVALOS
+calve usuario secundario:Ava001
+
+
+
+***************   Tienda Grocio Prado  *****
+
+ruc: 10218351480
+clave : Grocio2020
+
+id usuario secundario :AVALOSUV
+calve usuario secundario:Avalos01
