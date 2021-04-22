@@ -81,7 +81,7 @@ class Comprobantes extends CI_Controller {
      * PRODUCTO POS        / ALEXADER FERNANDEZ / 20-04-2021 */
 
     public function pos(){
-        $data['empresa'] = $this->empresas_model->select($this->uri->segment(3));            
+        $data['empresa'] = $this->empresas_model->select($this->uri->segment(3));          
         $data['tipo_item'] = $this->tipo_items_model->select();
         $data['tipo_igv'] = $this->tipo_igv_model->select('', '', '', 0);
         
@@ -92,6 +92,7 @@ class Comprobantes extends CI_Controller {
         $data['boleta_antigua'] = $this->variables_diversas_model->boleta_antigua;
         $data['tipo_clientes'] = $this->tipo_clientes_model->select();
         $data['medida'] = $this->medida_model->select();        
+        $data['categoria'] = $this->categoria_model->select();
         $data['configuracion'] = $this->db->from('comprobantes_ventas')->get()->row();        
 
         $data['vendedores'] = $this->db->where('tipo_empleado_id',20)->get('empleados')->result();
@@ -111,13 +112,15 @@ class Comprobantes extends CI_Controller {
         //echo $_POST['productoText'];exit;
         $rsProductos = $this->productos_model->listaProductosPos();
         $rowProductos = count($rsProductos);
+
+
         //var_dump($rsProductos);exit;
         $listaProductosPos  = '<br><br><br><table class="table table bordered">
-                                    <input type="hidden" name="rowProducto" id="rowProducto" value="'.$rowProductos.'">
-                                    <input type="hidden" name="codProducto" id="codProducto" value="'.$rsProductos[0]->prod_id.'">';
+                                    <input type="hidden" name="rowProducto" id="rowProducto" value="'.$rsProductos['rsProductos'].'">
+                                    <input type="hidden" name="codProducto" id="codProducto" value="'.$rsProductos['rsProductos'][0]->prod_id.'">';
 
             $i = 0;                        
-            foreach ($rsProductos as  $rsProducto) {
+            foreach ($rsProductos['rsProductos'] as  $rsProducto) {
                 
                 if($i%5 == 0) $listaProductosPos .= '</tr><tr>';
 
@@ -126,6 +129,32 @@ class Comprobantes extends CI_Controller {
                 $i++;
             }
         $listaProductosPos .= '</table>';
+
+        //echo $rsProductos['rows'].'----'.$_POST['pageSize'];exit;
+        if ($rsProductos['rows'] > 0) 
+            $num_pages = ceil($rsProductos['rows'] / $_POST['pageSize']);
+
+
+        //echo $num_pages;exit;
+
+        if ($num_pages > 1) {
+                    $listaProductosPos .='<div class="row">';
+                    $listaProductosPos .='<div class="col-lg-12">';
+                    $listaProductosPos .='<nav aria-label="Page navigation example">';
+                    $listaProductosPos .='<ul class="pagination justify-content-end">';
+                    for ($i=1;$i<=$num_pages;$i++) {
+                        $class_active = '';
+                        if ($i == 1) {
+                            $class_active = 'active';
+                        }
+                        $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="'.$i.'">'.$i.'</a></li>';
+                    }             
+                    $listaProductosPos .='</ul>';
+                    $listaProductosPos .='</nav>';
+                    $listaProductosPos .= '</div>';
+                    $listaProductosPos .= '</div>';
+            }
+
         echo $listaProductosPos;
     }
 

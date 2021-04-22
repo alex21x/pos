@@ -697,19 +697,29 @@ class Productos_model extends CI_Model
     * PRODUCTO POS        / ALEXADER FERNANDEZ / 21-04-2021 */
 
     public function listaProductosPos(){
-
-
+      $categoria = $_POST['categoria'];      
+      if ($categoria != ''){
+        $this->db->where('cat.cat_id',$categoria);
+      }
       //echo $_POST['productoText'];exit;
       $where = '(pr.prod_estado = '.ST_ACTIVO.' AND pr.prod_nombre LIKE "%'.$_POST['productoText'].'%") OR (pr.prod_estado='.ST_ACTIVO.' AND pr.prod_codigo LIKE "%'.$_POST['productoText'].'%") OR (pr.prod_estado ='.ST_ACTIVO.' AND pr.prod_codigo_barra LIKE "%'.$_POST['productoText'].'%")';
 
-      $rsProductos = $this->db->from('productos pr')
+
+        $select = $this->db->from('productos pr')
                                 ->join("categoria cat","pr.prod_categoria_id=cat.cat_id")
                                 ->join("medida md","pr.prod_medida_id=md.medida_id")
                                 ->where('pr.prod_almacen_id',$this->session->userdata("almacen_id"))
-                                ->where($where)
-                                ->get()
-                                ->result();
+                                ->where($where);                                
 
+        $selectCount = clone $select;
+        $rsCount = $selectCount->get()
+                               ->result();
+        $rsCount = count($rsCount);
+        
+        $rsProductos = $select->limit($_POST['pageSize'], $_POST['skip'])
+                              ->get()
+                              ->result();
+        
 
         foreach ($rsProductos as $rsProducto) {
             
@@ -718,34 +728,11 @@ class Productos_model extends CI_Model
 
             $rsProducto->prod_stock = $producto_stock;
         }
-
-        //var_dump($rsProductos);exit;
-
-        /*$data = array();    
-        foreach ($result as $prod){
-
-          $stock = $this->getStockProductos($prod->prod_id,$this->session->userdata("almacen_id"));
-          $producto_stock = ($stock!='')?$stock:'0';
-
-            $data[] = array(
-                "value" => $prod->prod_nombre." ........ Precio: ".$prod->prod_precio_publico." / Stock: ".$producto_stock,
-                "codigo" => $prod->prod_codigo,
-                "precio" => $prod->prod_precio_publico,
-                "prod_precio_publico" => $prod->prod_precio_publico,
-                "prod_precio_2" => $prod->prod_precio_2,
-                "prod_precio_3" => $prod->prod_precio_3,
-                "prod_precio_4" => $prod->prod_precio_4,
-                "prod_precio_5" => $prod->prod_precio_5,
-                "precioCosto" => $prod->prod_precio_compra,
-                "id" => $prod->prod_id,
-                "prod_cat_id" => $prod->prod_categoria_id,
-                "prod_stock" => $producto_stock,
-                "categoria" => $prod->cat_nombre,
-                "prod_medida_id" => $prod->prod_medida_id,
-                "medida" => $prod->medida_nombre
-              
-            );
-        } */      
-        return $rsProductos;
+        
+        $datos = [
+                'rsProductos' => $rsProductos,
+                'rows' => $rsCount
+             ];             
+        return $datos;
     } 
 }

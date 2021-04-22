@@ -18,26 +18,73 @@
   /* DETALLE DE CAMBIO      / AUTOR               / FECHA
      *-----------------------------------------------------------   
      * PRODUCTO POS        / ALEXADER FERNANDEZ / 20-04-2021 */
+
+     listaProductos();
      $(document).on("change","#producto",function(){
+          listaProductos();
+     });
+
+     $(document).on("change","#categoria",function(){
+          listaProductos();
+     });
+
+    $(document).on('click','.pagination li a', function(){
+        //$('.items').html('<div class="loading"><img src="images/loading.gif" width="70px" height="70px"/><br/>Un momento por favor...</div>');
+        var skip = $(this).attr('data');  
+        listaProductos(skip);
+
+    });
+
+     function listaProductos(skip){        
+
+        var skip = skip;
+
+        //$rowsPerPage = NUM_ITEMS_BY_PAGE;
+        //$offset = ($page - 1) * $rowsPerPage;
+        var pageSize = 20;
         var productoText =  $("#producto").val();
+        var categoria = $("#categoria").val();
 
         $.ajax({
           url: '<?= base_url()?>index.php/comprobantes/listaProductosPos',
           method: 'POST',
           dataType: 'HTML',
-          data: {productoText : productoText},
+          data: {productoText : productoText,categoria: categoria,pageSize: pageSize,skip:skip},
           success: function(response){
-              $("#listaProductos").html(response);
+              
+              $('#listaProductos').fadeIn(2000).html(response);
+              $('.pagination li').removeClass('active');
+              $('.pagination li a[data="'+skip+'"]').parent().addClass('active');              
 
               var rowProducto = $("#rowProducto").val();
               var codProducto = $("#codProducto").val();
-
               if(rowProducto == 1){
                 agregarItem(codProducto);
               }
           }
-        })
-     });
+      })
+     }
+
+
+     $('.pagination li a').on('click', function(){
+        $('.items').html('<div class="loading"><img src="images/loading.gif" width="70px" height="70px"/><br/>Un momento por favor...</div>');
+ 
+        var page = $(this).attr('data');    
+        var dataString = 'page='+page;
+ 
+        $.ajax({
+            type: "GET",
+            url: "ajax.php",
+            data: dataString,
+            success: function(data) {
+                $('.items').fadeIn(2000).html(data);
+                $('.pagination li').removeClass('active');
+                $('.pagination li a[data="'+page+'"]').parent().addClass('active');
+            }
+        });
+        return false;
+    });
+
 </script>
 
 <!-- COMPROBANTE CSS -->
@@ -45,14 +92,27 @@
 <div id="mensaje"></div>
      
 <div class="container-fluid">
-<div class="col-xs-6 col-md-6 col-lg-6"><br><br>
-  <input type="text" class="form-control" name="producto" id="producto" placeholder="BUSCAR PRODUCTO"> 
+<div class="col-xs-6 col-md-6 col-lg-6"><br><br>  
 
-  <div id="listaProductos">
-
-
+  <div class="row">
+    <div class="col-xs-4 col-md-offset-8 col-lg-4">
+      <label for="prod_categoria">Categoria</label>
+      <select class="form-control col-lg-6" id="categoria" name="prod_categoria">
+                  <option value="">Seleccione</option>
+                  <?php foreach ($categoria as $value): ?>
+                    <option value="<?php echo $value->cat_id;?>" <?php if($value->cat_id == $producto->prod_categoria_id):?> selected <?php endif?> > <?php echo $value->cat_nombre;?></option>  
+                  <?php endforeach ?>                              
+      </select>
+    </div><br><br><br><br><br>
   </div>
-  <button href="#" id="total_a_pagarPos" name="total_a_pagarPos" class="btn btn-info btn-block total_a_pagarPos"></button>
+  <div class="row">
+    <div class="col-xs-12 col-md-12 col-lg-12">
+      <input type="text" class="form-control" name="producto" id="producto" placeholder="BUSCAR PRODUCTO"> 
+        <div id="listaProductos"></div>
+      <button href="#" id="total_a_pagarPos" name="total_a_pagarPos" class="btn btn-info btn-block total_a_pagarPos"></button>
+    </div>
+
+  </div>  
 </div>  
 <div class="col-xs-6 col-md-6 col-lg-6">
 <input type="hidden" id="auto" value="<?php echo $configuracion->facturador_auto;?>">
