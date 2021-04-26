@@ -1,0 +1,99 @@
+#invoice-item {
+  position: relative;
+}
+#invoice-item .table input[type='number'] {
+  width: 40px;
+}
+#invoice-item-head thead tr th {
+  font-size: 1.2rem;
+  padding: 3px;
+}
+#invoice-item-head thead tr {
+  background-color: #f4f4f4;
+}
+#invoice-item-head thead tr th:nth-child(1) {
+  width: 50px;
+  text-align: center;
+}
+#invoice-item-head thead tr th:nth-child(2) {
+  width: 150px;
+  text-align: center;
+}
+#invoice-item-head thead tr th:nth-child(3) {
+  width: 50px;
+  text-align: right;
+}
+#invoice-item-head thead tr th:nth-child(4) {
+  width: 70px;
+  text-align: right;
+}
+#invoice-item-head thead tr th:nth-child(5) {
+  width: 15px;
+  text-align: left;
+}
+#invoice-item-list {
+  position: relative;
+  min-height: 130px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#invoice-item-list .invoice-item {
+  background-color: #f7fffb;
+}
+#invoice-item-list table tbody td {
+  position: relative;
+  vertical-align: middle;
+  padding: 0 3px;
+}
+#invoice-item-list table tbody td.product-quantity {
+  width:40px;
+  text-align:center;
+}
+#invoice-item-list .product-quantity button {
+  width: 100%;
+  line-height: 0;
+  padding: 0;
+    margin: 0;
+}
+#invoice-item-list .product-quantity button.btn-up {
+  position: relative;
+    color: #ffffff;
+    background-color: #bef1d9;
+}
+#invoice-item-list .product-quantity button.btn-down {
+    color: #ffffff;
+    background-color: #fddeda;
+    margin-bottom: 4px;
+}
+#invoice-item-list .invoice-item .delete-icon {
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+#invoice-item-list .invoice-item .product-name {
+  width:150px;
+}
+#invoice-item-list .invoice-item .product-name span {
+  display: block;
+    color: #fff;
+    font-size: 1.4rem;
+    text-align: center;
+    font-weight: 700;
+    padding: 5px 10px;
+    background-color: #026c3c;
+    border: 2px solid #e7fff4;
+    border-radius: 20px;
+    box-shadow: 0 0 1px rgba(0,0,0,0.3);
+}
+#invoice-item-list .invoice-item .product-price {
+  width: 50px;
+  text-align: right;
+}
+#invoice-item-list .invoice-item .product-subtotal {
+  width: 70px;
+  text-align: right;
+}
+#invoice-item-list .invoice-item .product-delete {
+  width: 20px;
+  /*text-align:center;*/
+}

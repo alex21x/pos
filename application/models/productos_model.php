@@ -697,6 +697,9 @@ class Productos_model extends CI_Model
     * PRODUCTO POS        / ALEXADER FERNANDEZ / 21-04-2021 */
 
     public function listaProductosPos(){
+
+      //echo $_POST['productoText'];exit();
+
       $categoria = $_POST['categoria'];      
       if ($categoria != ''){
         $this->db->where('cat.cat_id',$categoria);
@@ -709,7 +712,8 @@ class Productos_model extends CI_Model
                                 ->join("categoria cat","pr.prod_categoria_id=cat.cat_id")
                                 ->join("medida md","pr.prod_medida_id=md.medida_id")
                                 ->where('pr.prod_almacen_id',$this->session->userdata("almacen_id"))
-                                ->where($where);                                
+                                ->where($where);      
+
 
         $selectCount = clone $select;
         $rsCount = $selectCount->get()
@@ -719,6 +723,9 @@ class Productos_model extends CI_Model
         $rsProductos = $select->limit($_POST['pageSize'], $_POST['skip'])
                               ->get()
                               ->result();
+
+
+                              //var_dump($rsProductos);exit;
         
 
         foreach ($rsProductos as $rsProducto) {

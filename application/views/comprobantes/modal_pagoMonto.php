@@ -48,7 +48,7 @@
 }}   
 </style>
 
-
+<form id="formPagoMonto">
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="modal-dialog modal-lg modal-dialog-pagoMonto" role="document">
         <div class="modal-content">
@@ -216,10 +216,7 @@
 
 
 
-            <div class="col-xs-6 col-md-6 col-lg-6">
-
-
-              <form id="formPagoMonto">
+            <div class="col-xs-6 col-md-6 col-lg-6">              
                 <div class="form-group">
                 <table id="tablaPago" class="table" style="display:block;" border="0">                                                      
                                         <tbody>                                                      
@@ -425,6 +422,8 @@
      </div>   
 </div>  
 <script type="text/javascript">
+  //CÁLCULO DE MONTOS A PAGAR
+  cmp.calcular();
 
     //FUNCION AGREGAR PAGO MONTO 10-10-2020
         function agregarFilaPagoMonto(){ 
@@ -432,7 +431,7 @@
                     importe_pagoMonto = (rowMontoPago == 0) ? $("#total_a_pagar").val() : '';
                     moneda = $("#moneda_id option:selected").text();                    
 
-            var  fila = '<div class="panel panel-default cont-item montoPago">';                 
+            var  fila = '<div class="panel panel-default cont-item montoPago">';
                  fila += '<div class="panel-heading">Medio Pago '+moneda.toUpperCase()+'</div>'
                  fila += '<div class="panel-body">'
                  fila += '<div class="col-xs-12 col-md-6 col-lg-6">'
@@ -548,5 +547,133 @@
         return cambio;
    }    
 
+
+
+    $('#mostrarCompNota').css('display', 'none');
+
+        //OBTENIENDO SERIE,NUMERO
+        function documentoChange(){
+            var selec = $('#tipo_documento option:selected').val();
+            //solo para boletas, facturas, notas de credito y debito,
+            //obviamos la opcion: facturas antiguas y boletas antiguas
+            console.log(selec);
+            if((selec == 1) || (selec == 3) || (selec == 7) || (selec == 8) || (selec == 9) || (selec == 10)){
+                $.ajax({
+                    url : '<?= base_url()?>index.php/serNums/selectSerie/<?= $empresa['id']?>',
+                    type: 'POST',
+                    data: {tipo_documento_id : selec},
+                    dataType : 'HTML',
+                    success :  function(data){
+                        $('#serie').html(data);
+                        serieChange();
+                    }
+                });
+
+                var serie_selec = $('#serie option:selected').val();                
+                
+                $('#div_serie_actual').show();
+                $('#div_serie_antiguo').hide();
+                //$("#numero").attr("readonly", true);
+                //seteo el valor de la serie antiguo (serie manual).
+                $('#serie_antiguo').val('');
+                
+            }else{
+                $('#div_serie_actual').hide();
+                $('#div_serie_antiguo').show();
+                //$("#numero").attr("readonly", false);
+                $("#numero").val('');
+            }
+        }
+
+
+        function serieChange(){
+            var selec  = $("#serie option:selected").val();
+          
+            var tipo_documento = $('#tipo_documento option:selected').val();
+            var url_ser = '<?= base_url()?>index.php/comprobantes/selectUltimoReg/<?= $empresa['id']?>/'+tipo_documento+'/'+selec;
+            //alert(url_ser);
+            //console.log(selec);
+            $.ajax({
+                url : url_ser,
+                type: 'POST',
+                data: {serieId : selec},
+                dataType : 'JSON',
+                success :  function(data){
+                    $('#numero').val(parseInt(data.numero));
+                }
+            });          
+
+            if(tipo_documento <= 3){
+                    $('#mostrarCompNota').css('display','none');
+                    if(tipo_documento == 1){
+                        $('#mostrarDetraccion').css('display','block');
+                    }
+                    if(tipo_documento == 3){
+                        $('#mostrarDetraccion').css('display','none');
+                    }
+                } else {
+                    $('#mostrarDetraccion').css('display','none');
+                    $('#mostrarCompNota').css('display','block');
+                    if(tipo_documento == 7 || tipo_documento == 9){
+                        cargaDocumentosNotasCredito();
+                        $('#tipo_ncredito').prop('disabled',false);
+                        $('#tipo_ndebito').prop('disabled',true);
+                    }
+                    if(tipo_documento == 8 || tipo_documento == 10){
+                        cargaDocumentosNotasCredito();
+                        $('#tipo_ncredito').prop('disabled',true);
+                        $('#tipo_ndebito').prop('disabled',false);
+                    }
+                }
+        }
+
+
+        //EVENTO COMBOBOX TIPO DE CAMBIO
+        function tipoCambio(){     
+         var selec = $('#moneda_id option:selected').val();
+               if(selec > 1){
+                   $('#tipo_de_cambio').prop('disabled',false);
+                   $.ajax({
+                   url : "<?= base_url()?>index.php/comprobantes/tipoCambio",
+                   method : "POST",
+                   data : {moneda_id : selec},
+                   dataType : 'JSON',
+                   success : function(data){                    
+                               $('#tipo_de_cambio').val(data.tipo_cambio);
+                               calcular();
+                       }
+                   });                    
+               } else {
+                   $('#tipo_de_cambio').val('');
+                   $('#tipo_de_cambio').prop('disabled',true);
+                   calcular();
+               }                                       
+        }
+
+
+    // EVENTO COMBOBOX NOTA DE CREDITO , DEBITO
+        $('#tipo_documento').on('change',function(){    
+           documentoChange();                
+       });
+
+        $('#serie').on('click',function(){
+           serieChange();
+        });
+        documentoChange();
+
+        serieChange();
+
+
+        //EVENTO COMBOBOX TIPO DE CAMBIO
+        $(document).on('change','#moneda_id',function(){
+         tipoCambio();                                                  
+        });
+        
+        //CAPTURANDO EVENTOS
+        $('#tipo_de_detraccion').prop('disabled',true);
+        //Operacion Gratuita
+        $('#operacion_gratuita').on('change',function(){
+            operacion_gratuita();
+        });   
    
 </script>

@@ -107,48 +107,104 @@ class Comprobantes extends CI_Controller {
         $this->load->view('templates/footer');
     }
 
+
+
+    public function addItemPos(){
+        $rsProducto = $this->productos_model->select($_POST['productoId']);
+        echo json_encode($rsProducto);
+    }
+
+
     public function listaProductosPos(){        
-        
-        //echo $_POST['productoText'];exit;
+                
         $rsProductos = $this->productos_model->listaProductosPos();
-        $rowProductos = count($rsProductos);
+        $rowProductos = count($rsProductos['rsProductos']);
 
 
         //var_dump($rsProductos);exit;
         $listaProductosPos  = '<br><br><br><table class="table table bordered">
-                                    <input type="hidden" name="rowProducto" id="rowProducto" value="'.$rsProductos['rsProductos'].'">
-                                    <input type="hidden" name="codProducto" id="codProducto" value="'.$rsProductos['rsProductos'][0]->prod_id.'">';
+                                    <input type="hidden" name="rowProducto" id="rowProducto" value="'.$rowProductos.'">
+                                    <input type="hidden" name="codProducto" id="codProducto" value="'.$rsProductos['rsProductos'][0]->prod_id.'">
+                                    <input type="hidden" name="stockProducto" id="stockProducto" value="'.$rsProductos['rsProductos'][0]->prod_stock.'">';
 
             $i = 0;                        
-            foreach ($rsProductos['rsProductos'] as  $rsProducto) {
-                
-                if($i%5 == 0) $listaProductosPos .= '</tr><tr>';
+            foreach ($rsProductos['rsProductos'] as  $rsProducto) {                        
+                    if($i%5 == 0) $listaProductosPos .= '</tr><tr>';
+                    if($rsProducto->prod_stock > 0){       
 
-                $listaProductosPos .= '<td class="listaProductosPos" onclick="agregarItem('.$rsProducto->prod_id.')"><img src="'.base_url().'images/productos/'.$rsProducto->prod_imagen.'" class="imgListaProducto"><br>'.$rsProducto->prod_nombre.'</td>';
-
-                $i++;
+                        $listaProductosPos .= '<td class="listaProductosPos" onclick="agregarItem('.$rsProducto->prod_id.',1,'.$rsProducto->prod_stock.')"><img src="'.base_url().'images/productos/'.$rsProducto->prod_imagen.'" class="imgListaProducto"><br>'.$rsProducto->prod_nombre.'</td>';
+                        $i++;
+                    }     
             }
-        $listaProductosPos .= '</table>';
+        $listaProductosPos .= '</table>';        
+
+
+        $rsProductos['rows'] = $i;
 
         //echo $rsProductos['rows'].'----'.$_POST['pageSize'];exit;
         if ($rsProductos['rows'] > 0) 
             $num_pages = ceil($rsProductos['rows'] / $_POST['pageSize']);
 
+        $page = $_POST['page'];
+        $adjacents = 2;
+        $prevlabel = "&lsaquo; Anterior";
+        $nextlabel = "Siguiente &rsaquo;";
+        $out = '<ul class="pagination   pull-right">';
 
-        //echo $num_pages;exit;
+        //echo $page;exit;
 
         if ($num_pages > 1) {
                     $listaProductosPos .='<div class="row">';
                     $listaProductosPos .='<div class="col-lg-12">';
                     $listaProductosPos .='<nav aria-label="Page navigation example">';
-                    $listaProductosPos .='<ul class="pagination justify-content-end">';
-                    for ($i=1;$i<=$num_pages;$i++) {
+                    $listaProductosPos .='<ul class="pagination justify-content-end">';                    
+
+                    if($page==1) {
+                        $listaProductosPos .='<li class="page-item disabled"><a>'.$prevlabel.'</a></li>';
+                    } else if($page==2) {
+                        $listaProductosPos .='<li class="page-item"><a class="page-link" href="#" data="1">'.$prevlabel.'</a></li>';
+                        //$out.= "<li class='page-item'><a href='javascript:void(0);' onclick='load(1)'>$prevlabel</a></li>";
+                    }else {
+                        $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="'.($page-1).'">'.$prevlabel.'</a></li>';
+                        //$out.= "<li class='page-item'><a href='javascript:void(0);' onclick='load(".($page-1).")'>$prevlabel</a></li>";                 
+                    }
+                    // first label
+                    if($page>($adjacents+1)) {
+                            $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="1">1</a></li>';
+                            //$out.= "<li class='page-item'><a href='javascript:void(0);' onclick='load(1)'>1</a></li>";
+                    }
+                    // interval
+                    if($page>($adjacents+2)) {
+                            $listaProductosPos .='<li class="page-item"><a>...</a></li>';
+                            //$out.= "<li class='page-item'><a>...</a></li>";
+                    }
+
+                    $pmin = ($page>$adjacents) ? ($page-$adjacents) : 1;
+                    $pmax = ($page<($num_pages-$adjacents)) ? ($page+$adjacents) : $num_pages;
+
+                    for ($i=$pmin;$i<=$pmax;$i++) {
                         $class_active = '';
                         if ($i == 1) {
-                            $class_active = 'active';
-                        }
+                            $class_active = 'active';                            
+                        }                        
                         $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="'.$i.'">'.$i.'</a></li>';
-                    }             
+                    }                    
+                    // interval
+                    if($page < ($num_pages-$adjacents-1)) {
+                        $listaProductosPos .= "<li class='page-item'><a>...</a></li>";
+                    }                 
+                    // last                 
+                    if($page < ($num_pages-$adjacents)) {
+                        $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="'.$num_pages.'">'.$num_pages.'</a></li>';
+                    }
+
+                    // next
+                    if($page<$num_pages) {
+                        $listaProductosPos .='<li class="page-item '.$class_active.'"><a class="page-link" href="#" data="'.($page+1).'">'.$nextlabel.'</a></li>';                        
+                    }else {
+                        $listaProductosPos .='<li class="page-item disabled"><a>'.$nextlabel.'</a></li>';
+                    }                
+
                     $listaProductosPos .='</ul>';
                     $listaProductosPos .='</nav>';
                     $listaProductosPos .= '</div>';
@@ -161,6 +217,7 @@ class Comprobantes extends CI_Controller {
     //ALEXANDER FERNANDEZ 14-10-2020
     public function modal_pagoMonto(){
 
+        $data['empresa'] = $this->empresas_model->select(1);  
         $data['monedas'] = $this->monedas_model->select();
         $data['empresas'] = $this->empresas_model->select();        
         $data['transportistas'] = $this->transportistas_model->select();
@@ -169,6 +226,8 @@ class Comprobantes extends CI_Controller {
         $data['tipo_pagos'] =  $this->tipo_pagos_model->select();
         $data['tipo_ncreditos'] = $this->tipo_ncreditos_model->select('', '', '', 0);
         $data['tipo_ndebitos'] = $this->tipo_ndebitos_model->select('', '', '', 0);
+        $data['configuracion'] = $this->db->from('comprobantes_ventas')->get()->row();
+
         echo $this->load->view('comprobantes/modal_pagoMonto',$data);
     }
 
@@ -2429,6 +2488,8 @@ class Comprobantes extends CI_Controller {
 
      public function guardar_comprobante() {
 
+
+        //echo $_POST['tipo_documento'];exit;
         //DEVUELVO EL STOCK
         if($_POST['notap_id'] != ''){
             $this->notas_model->devolverStock($_POST['notap_id']);

@@ -18,6 +18,7 @@
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/jquery.toast.min.css">         
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/jquery-confirm.min.css">         
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/style_hector.css">  
+        <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/pos.css">
          <!-- custom css -->
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/custom.css">
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/jquery.dataTables.min.css">   

@@ -12,6 +12,10 @@
   font-size: 50px;
   font-weight: bold;
 }
+.generarComprobante{
+  font-size: 35px;
+  font-weight: bold;
+}
 
 </style>
 <script type="text/javascript">  
@@ -19,29 +23,163 @@
      *-----------------------------------------------------------   
      * PRODUCTO POS        / ALEXADER FERNANDEZ / 20-04-2021 */
 
-     listaProductos();
-     $(document).on("change","#producto",function(){
-          listaProductos();
-     });
+     listaProductos(1);         
+      $(document).on("change","#producto",function(){        
+          listaProductos(1);          
+     });     
 
      $(document).on("change","#categoria",function(){
-          listaProductos();
+          listaProductos(1);
      });
 
     $(document).on('click','.pagination li a', function(){
         //$('.items').html('<div class="loading"><img src="images/loading.gif" width="70px" height="70px"/><br/>Un momento por favor...</div>');
-        var skip = $(this).attr('data');  
-        listaProductos(skip);
+        var page = $(this).attr('data');  
+        listaProductos(page);
 
     });
 
-     function listaProductos(skip){        
 
-        var skip = skip;
+     //LECTOR DE CODIGO DE BARRAS ALEXANDER FERNANDEZ 10-11-2020      
+    function agregarItem(productoId,qty,stock,blur){
+        
+        var qty = qty;
+        var cantidad_1 = 0;
+        var repetidos = 0;
+        var ele = '';
+        var itemListHeight = '';
 
-        //$rowsPerPage = NUM_ITEMS_BY_PAGE;
-        //$offset = ($page - 1) * $rowsPerPage;
+         if(stock <= 0) {//PRODUCTO SIN SOTCK                                               
+                  cmp.playSound('error.mp3');
+                  cantidad_1 = 1;
+                  toast('error', 1500, 'Producto sin Stock!');
+                  //window.toastr.error("This product is out of stock!", "Warning!");
+                  return false;                  
+         }
+                        
+            var tabla = $('#tabla > tbody > tr');
+
+            if(typeof(tabla.length) !== 'undefined'){
+              $.each(tabla,function(indice,value){   
+              
+              var codProducto =  $(this).find('#item_id').val();              
+              
+                //$scope.itemQuantity = stock - $scope.prevQuantity;
+                //if ((qty > stock || $scope.itemQuantity >= stock)) {                            
+              if(codProducto == productoId){
+                var cantidad =  $(this).find('#cantidad').val();
+                var ele = $(this);
+
+                //console.log($(this));
+
+
+
+                prevCantidad = parseFloat(cantidad) + parseFloat(qty);
+                if(qty > stock || prevCantidad > stock) {                                                
+                  cmp.playSound('error.mp3');
+                  cantidad_1 = cantidad;                  
+                  toast('error', 1500, 'Producto sin Stock!');
+                  $(this).find('#cantidad').val(stock);                  
+                  //window.toastr.error("This product is out of stock!", "Warning!");
+                  return false;                  
+                }
+                  //cantidad++;
+                  if(blur == 1) qty--;
+                  cantidad = parseFloat(cantidad) + parseFloat(qty);
+                  $(this).find('#cantidad').val(cantidad);
+                  repetidos++;
+                  if(blur != 1)cmp.playSound('access.mp3');
+                  $('#producto').val('');
+                  $('#producto').focus();              
+
+                if(repetidos > 0) cantidad = 1;
+                var parent = $(this);
+                cmp.calcular(parent);
+                cantidad_1 = cantidad;                
+              }
+            });              
+              if(cantidad_1 > 0) productoId = '';             
+          }
+
+         //var ele = $("#invoice-item-"+response.data.p_id).parent();  
+                if (ele.length) {
+                    itemListHeight = ele.position().top;
+                } else {
+                    itemListHeight += 61;
+                }    
+                //$("#tabla").animate({ scrollTop: itemListHeight }, 1).perfectScrollbar("update");
+                setTimeout(function() {
+                    if (!ele.length) {
+                        ele = $("#tabla tr:last");
+                    }
+                    var flashColor = "#d9edf7";
+                    //var flashColor = "#19c2f9";                    
+                    var originalColor = ele.css("backgroundColor");
+                    ele.css("backgroundColor", flashColor);
+                    setTimeout(function (){
+                      ele.css("backgroundColor", originalColor);
+                    }, 300);
+          }, 100);
+
+        if (cantidad_1 < 1){
+            $('#agrega').trigger('click');
+
+            _item  = $('#tabla tr:last');
+            //console.log(_item);
+            _item.find('#producto').focus();
+            _item.find('#producto').val(productoId);
+
+            //bar = barcode;
+            $.post('<?PHP echo base_url();?>index.php/productos/selectPrecioCodProducto',{
+                codProducto : productoId             
+                },function(data){               
+                
+                var data_item = '<input class="val-descrip"  type="hidden" value="'+ data.prod_id + '" name = "item_id[]" id = "item_id" >';
+                _item.find('#data_item').html(data_item);                
+                _item.find('#descripcion').attr("readonly",true);
+                _item.find('.descripcion-item').val(data.prod_nombre);
+                _item.find('#medida').val(data.prod_medida);                
+                //_item.find('#codBarra').val(bar);
+                _item.find('.importe').val(data.prod_precio_publico);
+                _item.find('.importeCosto').val(data.prod_precio_compra);
+
+                //PRESENTACION PRODUCTO - ALEXANDER FERNANDEZ 27-10-2020
+                $.ajax({
+                    url: '<?= base_url();?>index.php/productos/selectPresentacionVenta/'+data.prod_id,
+                    dataType: 'HTML',
+                    method: 'GET',
+                    success: function(data){
+                        _item.find('#presentacion').append(data);                        
+                        presentacion(parent);
+                    }
+                });
+
+                $('#producto').val('');
+                $('#producto').focus();                                                                                                      
+                var parent = _item.find('.descripcion-item').parents().parents().get(0);                             
+                cmp.calcular(parent);                                           
+                },'json');
+
+
+             cmp.playSound('access.mp3');
+             barcode = '';
+        }
+        else if(code==9)// Tab key hit
+        {         
+        }else if(code==13 && (barcode.length == 0)){
+            barcode = '';
+        }
+        else
+        {          
+          barcode=barcode+String.fromCharCode(code);
+        }    
+    }
+
+     function listaProductos(page){
+        var page = page;
+        //$page = NUM_ITEMS_BY_PAGE;        
         var pageSize = 20;
+        var skip = (page - 1) * pageSize;
         var productoText =  $("#producto").val();
         var categoria = $("#categoria").val();
 
@@ -49,7 +187,7 @@
           url: '<?= base_url()?>index.php/comprobantes/listaProductosPos',
           method: 'POST',
           dataType: 'HTML',
-          data: {productoText : productoText,categoria: categoria,pageSize: pageSize,skip:skip},
+          data: {productoText : productoText,categoria: categoria,pageSize: pageSize,page:page,skip:skip},
           success: function(response){
               
               $('#listaProductos').fadeIn(2000).html(response);
@@ -57,32 +195,55 @@
               $('.pagination li a[data="'+skip+'"]').parent().addClass('active');              
 
               var rowProducto = $("#rowProducto").val();
-              var codProducto = $("#codProducto").val();
+              var codProducto = $("#codProducto").val();              
+              var stockProducto = $("#stockProducto").val();
               if(rowProducto == 1){
-                agregarItem(codProducto);
+                agregarItem(codProducto,1,stockProducto);
               }
           }
       })
      }
 
 
-     $('.pagination li a').on('click', function(){
-        $('.items').html('<div class="loading"><img src="images/loading.gif" width="70px" height="70px"/><br/>Un momento por favor...</div>');
- 
-        var page = $(this).attr('data');    
-        var dataString = 'page='+page;
- 
+     function addItemPos(productoId,blur){
+
         $.ajax({
-            type: "GET",
-            url: "ajax.php",
-            data: dataString,
-            success: function(data) {
-                $('.items').fadeIn(2000).html(data);
-                $('.pagination li').removeClass('active');
-                $('.pagination li a[data="'+page+'"]').parent().addClass('active');
-            }
-        });
-        return false;
+          url: '<?= base_url()?>index.php/comprobantes/addItemPos',
+          method: 'POST',
+          dataType: 'JSON',
+          data: {productoId : productoId},
+          success: function(response){              
+                agregarItem(response.prod_id,1,response.prod_stock,blur);
+          }
+      })
+     }     
+
+     $(document).on('click','.addItem',function(){
+        var productoId = $(this).parent().parent().find('#item_id').val();
+        //var cantidad = $(this).parent().parent().find('#cantidad').val();
+        
+        addItemPos(productoId,0);
+     });
+
+     $(document).on('blur','.cantidad',function(){
+        var productoId = $(this).parent().parent().find('#item_id').val();
+        var cantidad = $(this).parent().parent().find('#cantidad').val();        
+        addItemPos(productoId,1);
+     });
+
+
+     $(document).on('click','.decreaseItem',function(){
+        var cantidad = $(this).parent().parent().find('#cantidad').val();
+
+        cantidad--;
+        if(cantidad >=1){
+            $(this).parent().parent().find('#cantidad').val(cantidad);            
+            cmp.playSound('modify.mp3');                       
+            refescar();
+        }else{
+            cmp.playSound('error.mp3');
+            toast('error', 1500, 'Error! cantidad');
+        }             
     });
 
 </script>
@@ -124,14 +285,14 @@
     <input type="hidden" name="precio_text" id="precio_text">    
 <div class="row">        
         <div class="col-md-12">
-            <div style="text-align: center"><h3>COMPROBANTE DE PAGO - <b><?= $empresa['empresa']?></b></h3></div>
+            <!--<div style="text-align: center"><h3>COMPROBANTE DE PAGO - <b><?= $empresa['empresa']?></b></h3></div>-->
             <div style="text-align: left" id="mensaje"></div>            
             
             <div class="panel panel-info" >
                 <div class="panel-heading" >
                     <div class="panel-title">COMPLETE DATOS DEL COMPROBANTE</div>                        
                 </div>
-                <div class="panel-body">                     
+                <div class="panel-body" style="height: 1010px;">                     
                     <div class="form-group" style="padding-top:20px;">    
                         <div class="col-md-12 form-inline col-lg-12">                            
                              <select class="form-control" name="operacion" id="operacion" style="display: none;">
@@ -153,12 +314,12 @@
                                 <input type="text" class="form-control " list="lista_clientes" id="cliente" onkeyup="buscar_cliente()" onchange="seleccionar_cliente()" value="<?php echo $tdoc.' '.$adjunto_datos->ruc.' '.$adjunto_datos->razon_social;?>">
                                 <input type="hidden" name="cliente_id" id="cliente_id" required="" value="<?php echo $adjunto_datos->cliente_id;?>">
                              <?php }else{ ?>  
-                                <input type="text" class="form-control"  id="cliente">
-                                <div id="data_cli"><input type="hidden" name="cliente_id" id="cliente_id" required="" value=""></div>
+                                <input type="text" class="form-control"  id="cliente" value="CLIENTES VARIOS">
+                                <div id="data_cli"><input type="hidden" name="cliente_id" id="cliente_id" required="" value="1"></div>
                              <?php } ?>                                   
                                 <input type="hidden" name="ruc_sunat" id="ruc_sunat">
                                 <input type="hidden" name="razon_sunat" id="razon_sunat">
-                                <input type="hidden" name="pago_monto" id="pago_monto">                               
+                                <input type="hidden" name="pago_monto" id="pago_monto">                     
                         </div>
                         <div class="col-xs-12 col-sm-3 col-md-2 col-lg-1 input_busqueda"><br>
                             <button type="button" id="nuevo_cliente" class="btn btn-primary btn-sm btn_buscar" data-toggle='modal' data-target='#myModalNuevoCliente'>NUEVO</button>                        
@@ -176,14 +337,15 @@
                     </div>  
 
                     <div class="row" id="valida">
-                                <div class="col-xs-12 col-md-12 col-lg-12">
+                                <div class="col-xs-12 col-md-12 col-lg-12" id="invoice-item-list">
                                     <table id="tabla" class="table" border="0">
                                         <thead>
-                                            <tr>                                                
-                                                <th colspan="2" class="col-sm-2">Descripcion</th>
+                                            <tr style="background-color: #848484;color: #FFF">
+                                                <th class="col-sm-1">Cant.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                                 <th class="col-sm-1" style="display: none;">Unid. Medida</th>
-                                                <th class="col-sm-1">Serie .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                                                <th class="col-sm-1">Cant.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>                                                
+                                                <!--<th class="col-sm-1">Serie .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>-->
+                                                
+                                                <th colspan="2" class="col-sm-2">Descripcion</th>
                                                 <th class="col-sm-3">Tipo Igv&nbsp;&nbsp;</th>
                                                 <th class="col-sm-1">Precio&nbsp;&nbsp;</th> 
                                                 <th class="col-sm-1">&nbsp;</th>    
@@ -218,20 +380,11 @@
 
 
     <div class="row" style="padding-top:20px;">
-        <div class="col-md-8 col-lg-8">                                                                         
-           
-<!-- ---------->
-        <div class="container-fluid">
-            <div class="row" style="padding-bottom: 2rem;">
-                <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="col-md-12 col-lg-12">                
                     <input type="hidden" name="ajaxId" id="ajaxId" value="<?= $ajaxId;?>"/>
-                    <button type="button" id="guardar"  class="btn btn-primary btn-lg btn-block" style="background: #1ABC9C;border:0;" data-toggle='modal' data-target='#myModalPagoMonto' data-keyboard='false' data-backdrop='static'>Generar Comprobante de Pago</button>
-                </div>
-            </div>
-        </div>    
-    </div>  
-
-
+                    <button type="button" id="guardar"  class="btn btn-primary btn-lg btn-block generarComprobante" style="background: #1ABC9C;border:0;" data-toggle='modal' data-target='#myModalPagoMonto' data-keyboard='false' data-backdrop='static'>Generar Comprobante de Pago</button>                                    
+        </div> 
+    </div> 
     </form>
     </div>
 </div> 
@@ -624,7 +777,7 @@
                     fila += '<option value="<?php echo $valor->medida_id;?>"><?php echo $valor->medida_nombre;?></option>';  
                 <?php endforeach ?>                            
                 fila += '</select></td>';                                                
-                fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
+                //fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
                 fila += '<td><input type="number" id="cantidad" name="cantidad[]"  class="form-control cantidad" value="1"></td>';
 
                 fila += '<td class="col-sm-2" style="border:0;">';
@@ -680,17 +833,7 @@
                     calcular();     
         });
 
-     //EVENTO COMBOBOX TIPO DE CAMBIO
-        $(document).on('change','#moneda_id',function(){
-         tipoCambio();                                                  
-        });
-        
-        //CAPTURANDO EVENTOS
-        $('#tipo_de_detraccion').prop('disabled',true);
-        //Operacion Gratuita
-        $('#operacion_gratuita').on('change',function(){
-            operacion_gratuita();
-        });
+       
         //Entrada Solo numeros
         $('#cantidad,#numero,#desc_uni').on('keydown',function(e){
             validNumericos(e);
@@ -738,15 +881,25 @@
         }
         //FUNCION AGREGAR FILA
         function agregarFila(){    
-            var fila = '<tr class="cont-item" >';
+            var fila = '<tr class="cont-item" class="invoice-item">';
+
+             fila += '<td>&nbsp;&nbsp;&nbsp;&nbsp;\
+                                <button type="button" class="btn btn-xs btn-up addItem">\
+                                  <span class="glyphicon glyphicon-triangle-top"></span>\
+                                </button>\
+                        <input type="number" id="cantidad" name="cantidad[]"  class="form-control cantidad text-center" value="1" style="width:60px;max-width:60px;border-radius: 20px;border: 1px solid #ddd;padding-top:0;padding-bottom:0;">&nbsp;&nbsp;&nbsp;&nbsp;\
+                        <button type="button" class="btn btn-xs btn-down decreaseItem">\
+                              <span class="glyphicon glyphicon-triangle-bottom"></span>\
+                            </button>\
+                        </td>';                
                                
                 fila += '<td colspan="2" class="col-sm-4" style="border:0;">'+                        
                         '<input class="form-control descripcion-item" rows="2" id="descripcion" name="descripcion[]" required="">'+                        
                         '<div id="data_item"><input type="hidden" name="item_id[]" id="item_id"></div></td>';
 
                 fila += '<td style="border:0;display: none;"><input type="text" class="form-control" readonly id="medida" name="medida[]"></td>' 
-                fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
-                fila += '<td><input type="number" id="cantidad" name="cantidad[]"  class="form-control cantidad" value="1"></td>';                
+                //fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
+               
 
                 fila += '<td class="col-sm-2" style="border:0;">'+
                         '<select class="form-control tipo_igv" id="tipo_igv" name="tipo_igv[]">';
@@ -770,7 +923,7 @@
                     fila += '<td style="display:none;"><input type="text" id="desc_uni"  name="descuento[]" class="form-control"></td>';
                 <?php endif ?>
 
-                fila += '<td style="border:0;">'+
+                fila += '<td style="border:0;">'+                        
                         '<input type="hidden" id="codBarra" name="codBarra[]" class="form-control">'+
                         '<input type="hidden" id="subtotal" name="subtotal[]" class="form-control" readonly="">'+
                         '<input type="text" id="total" name="total[]" class="form-control totalp" value ="0.00">'+
@@ -788,29 +941,7 @@
                    no_results_text : 'No se encontraton estos tags',                
                });    
         }
-
-
-        //EVENTO COMBOBOX TIPO DE CAMBIO
-        function tipoCambio(){     
-         var selec = $('#moneda_id option:selected').val();
-               if(selec > 1){
-                   $('#tipo_de_cambio').prop('disabled',false);
-                   $.ajax({
-                   url : "<?= base_url()?>index.php/comprobantes/tipoCambio",
-                   method : "POST",
-                   data : {moneda_id : selec},
-                   dataType : 'JSON',
-                   success : function(data){                    
-                               $('#tipo_de_cambio').val(data.tipo_cambio);
-                               calcular();
-                       }
-                   });                    
-               } else {
-                   $('#tipo_de_cambio').val('');
-                   $('#tipo_de_cambio').prop('disabled',true);
-                   calcular();
-               }                                       
-        }
+        
 
         //COMPROBANTE ADJUNTO 
         $("#comp_adjunto").chosen({
@@ -818,82 +949,25 @@
            no_results_text : 'No se encontraton estos tags'        
        });
         
-        $('#mostrarCompNota').css('display', 'none');
-
-        //OBTENIENDO SERIE,NUMERO
-        function documentoChange(){
-            var selec = $('#tipo_documento option:selected').val();
-            //solo para boletas, facturas, notas de credito y debito,
-            //obviamos la opcion: facturas antiguas y boletas antiguas
-            console.log(selec);
-            if((selec == 1) || (selec == 3) || (selec == 7) || (selec == 8) || (selec == 9) || (selec == 10)){
-                $.ajax({
-                    url : '<?= base_url()?>index.php/serNums/selectSerie/<?= $empresa['id']?>',
-                    type: 'POST',
-                    data: {tipo_documento_id : selec},
-                    dataType : 'HTML',
-                    success :  function(data){
-                        $('#serie').html(data);
-                        serieChange();
-                    }
-                });
-
-                var serie_selec = $('#serie option:selected').val();                
-                
-                $('#div_serie_actual').show();
-                $('#div_serie_antiguo').hide();
-                //$("#numero").attr("readonly", true);
-                //seteo el valor de la serie antiguo (serie manual).
-                $('#serie_antiguo').val('');
-                
+       $("#btn_es_anticipo").click(function(e){
+            e.preventDefault();
+            var anticipo = 0;
+            if(!_es_anticipo)
+            {
+                _es_anticipo = true;
+                $(this).addClass("btn-success");
+                $("#anticipo").val('1');
+                $("#panel_anticipos").hide();
             }else{
-                $('#div_serie_actual').hide();
-                $('#div_serie_antiguo').show();
-                //$("#numero").attr("readonly", false);
-                $("#numero").val('');
+                _es_anticipo = false;
+                $(this).removeClass("btn-success");
+                $("#anticipo").val('0');
+                $("#panel_anticipos").show();
             }
-        }
+            calcular();
+      });
 
-        function serieChange(){
-            var selec  = $("#serie option:selected").val();
-          
-            var tipo_documento = $('#tipo_documento option:selected').val();
-            var url_ser = '<?= base_url()?>index.php/comprobantes/selectUltimoReg/<?= $empresa['id']?>/'+tipo_documento+'/'+selec;
-            //alert(url_ser);
-            //console.log(selec);
-            $.ajax({
-                url : url_ser,
-                type: 'POST',
-                data: {serieId : selec},
-                dataType : 'JSON',
-                success :  function(data){
-                    $('#numero').val(parseInt(data.numero));
-                }
-            });          
-
-            if(tipo_documento <= 3){
-                    $('#mostrarCompNota').css('display','none');
-                    if(tipo_documento == 1){
-                        $('#mostrarDetraccion').css('display','block');
-                    }
-                    if(tipo_documento == 3){
-                        $('#mostrarDetraccion').css('display','none');
-                    }
-                } else {
-                    $('#mostrarDetraccion').css('display','none');
-                    $('#mostrarCompNota').css('display','block');
-                    if(tipo_documento == 7 || tipo_documento == 9){
-                        cargaDocumentosNotasCredito();
-                        $('#tipo_ncredito').prop('disabled',false);
-                        $('#tipo_ndebito').prop('disabled',true);
-                    }
-                    if(tipo_documento == 8 || tipo_documento == 10){
-                        cargaDocumentosNotasCredito();
-                        $('#tipo_ncredito').prop('disabled',true);
-                        $('#tipo_ndebito').prop('disabled',false);
-                    }
-                }
-        }
+        
 
        //carga documentos para Notas de credito
         function cargaDocumentosNotasCredito(){
@@ -1048,34 +1122,7 @@
                     };
             $("#myModalPrecio").load('<?php echo base_url()?>index.php/comprobantes/SeleccionaListaPrecio',datos);
         });
-        // EVENTO COMBOBOX NOTA DE CREDITO , DEBITO
-        $('#tipo_documento').on('change',function(){    
-           documentoChange();                
-       });
-
-        $('#serie').on('click',function(){
-           serieChange();
-        });
-        documentoChange();
-
-        serieChange();
-        $("#btn_es_anticipo").click(function(e){
-            e.preventDefault();
-            var anticipo = 0;
-            if(!_es_anticipo)
-            {
-                _es_anticipo = true;
-                $(this).addClass("btn-success");
-                $("#anticipo").val('1');
-                $("#panel_anticipos").hide();
-            }else{
-                _es_anticipo = false;
-                $(this).removeClass("btn-success");
-                $("#anticipo").val('0');
-                $("#panel_anticipos").show();
-            }
-            calcular();
-        });
+       
         //modal para agregar anticipo
         $("#btn_agregar_anticipo").click(function(e){
             var datos = {
@@ -1178,103 +1225,6 @@
         e.preventDefault();
         $("#myModalPagoMonto").load("<?= base_url()?>index.php/comprobantes/modal_pagoMonto",{});
     });
-
-
-
-    //LECTOR DE CODIGO DE BARRAS ALEXANDER FERNANDEZ 10-11-2020      
-
-
-    function agregarItem(barcode){
-      
-        var cantidad_1 = 0;
-        var repetidos = 0;
-                        
-            var tabla = $('#tabla > tbody > tr');
-
-            if(typeof(tabla.length) !== 'undefined'){              
-              $.each(tabla,function(indice,value){   
-              
-              var codBarra =  $(this).find('#item_id').val();              
-              var cantidad =  $(this).find('#cantidad').val();
-
-              if(codBarra == barcode){
-                  cantidad++;                  
-                  $(this).find('#cantidad').val(cantidad);
-                  repetidos++;
-                  cmp.playSound('access.mp3');
-                  $('#producto').val('');
-                  $('#producto').focus();                                                                                                      
-              }else{
-                //cantidad = (cantidad > 1) ? cantidad : 0;
-                cantidad =  0;
-              }
-              if (repetidos > 0) cantidad = 1;
-                                        
-                //console.log(codBarra + ' '+cantidad);
-                var parent = $(this); 
-                //console.log(parent);    
-                cmp.calcular(parent);  
-                cantidad_1 = cantidad;
-
-            });              
-              if(cantidad_1 > 0) barcode = '';              
-          }                
-
-        if (cantidad_1 < 1){
-            $('#agrega').trigger('click');
-
-            _item  = $('#tabla tr:last');
-            //console.log(_item);
-            _item.find('#producto').focus();
-            _item.find('#producto').val(barcode);
-
-            //bar = barcode;
-            $.post('<?PHP echo base_url();?>index.php/productos/selectPrecioCodProducto',{
-                codProducto : barcode             
-                },function(data){               
-                
-                var data_item = '<input class="val-descrip"  type="hidden" value="'+ data.prod_id + '" name = "item_id[]" id = "item_id" >';
-                _item.find('#data_item').html(data_item);                
-                _item.find('#descripcion').attr("readonly",true);
-                _item.find('.descripcion-item').val(data.prod_nombre);
-                _item.find('#medida').val(data.prod_medida);
-                //_item.find('#codBarra').val(bar);
-                _item.find('.importe').val(data.prod_precio_publico);
-                _item.find('.importeCosto').val(data.prod_precio_compra);
-
-                //PRESENTACION PRODUCTO - ALEXANDER FERNANDEZ 27-10-2020
-                $.ajax({
-                    url: '<?= base_url();?>index.php/productos/selectPresentacionVenta/'+data.prod_id,
-                    dataType: 'HTML',
-                    method: 'GET',
-                    success: function(data){
-                        _item.find('#presentacion').append(data);                        
-                        presentacion(parent);
-                    }
-                });
-
-                $('#producto').val('');
-                $('#producto').focus();                                                                                                      
-                var parent = _item.find('.descripcion-item').parents().parents().get(0);                             
-                cmp.calcular(parent);                                           
-                },'json');
-
-
-             cmp.playSound('access.mp3');
-             barcode = '';            
-        }
-        else if(code==9)// Tab key hit
-        {
-            //alert(barcode);
-        }else if(code==13 && (barcode.length == 0)){
-            barcode = '';
-        }
-        else
-        {
-          //barcode = '';
-          barcode=barcode+String.fromCharCode(code);
-        }    
-    }
 
     //PSE TOKEN 10-01-2021
     function send_xmlPSE(comprobante_id){
