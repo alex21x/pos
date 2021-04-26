@@ -6,7 +6,7 @@
 }
 
 #listaProductos{
-  height: 700px;
+  height: 1000px;
 }
 .total_a_pagarPos{
   font-size: 50px;
@@ -291,7 +291,7 @@
                 <div class="panel-heading" >
                     <div class="panel-title">COMPLETE DATOS DEL COMPROBANTE</div>                        
                 </div>
-                <div class="panel-body" style="height: 700px;">                     
+                <div class="panel-body" style="height: 1010px;">                     
                     <div class="form-group" style="padding-top:20px;">    
                         <div class="col-md-12 form-inline col-lg-12">                            
                              <select class="form-control" name="operacion" id="operacion" style="display: none;">
