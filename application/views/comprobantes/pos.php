@@ -252,8 +252,7 @@
 <div id="mensaje"></div>
      
 <div class="container-fluid">
-<div class="col-xs-6 col-md-6 col-lg-6"><br><br>  
-
+<div class="col-xs-6 col-md-6 col-lg-6">
   <div class="row">
     <div class="col-xs-4 col-md-offset-8 col-lg-4">
       <label for="prod_categoria">Categoria</label>
