@@ -1,20 +1,95 @@
 <style type="text/css">
-  
-.imgListaProducto{
+
+@media (min-width:0px) {
+ .imgListaProducto{
   width: 150px;
   height: 150px;
+  }
+  #listaProductos{
+    height: 650px;
+  }
+  .total_a_pagarPos{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .generarComprobante{
+    font-size: 35px;
+    font-weight: bold;
+  }}    
+
+@media (min-width: 768px) {
+  .imgListaProducto{
+  width: 150px;
+  height: 150px;
+  }
+  #listaProductos{
+    height: 650px;
+  }
+  .total_a_pagarPos{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .generarComprobante{
+    font-size: 35px;
+    font-weight: bold;
+  }
 }
 
-#listaProductos{
-  height: 650px;
-}
-.total_a_pagarPos{
-  font-size: 50px;
-  font-weight: bold;
-}
-.generarComprobante{
-  font-size: 35px;
-  font-weight: bold;
+@media (min-width: 992px) {
+  .imgListaProducto{
+  width: 150px;
+  height: 150px;
+  }
+  #listaProductos{
+    height: 650px;
+  }
+  .total_a_pagarPos{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .generarComprobante{
+    font-size: 35px;
+    font-weight: bold;
+}}      
+
+@media (min-width: 1200px) {
+ .imgListaProducto{
+    width: 150px;
+    height: 150px;
+  }
+  #listaProductos{
+    height: 1100px;
+  }
+  .total_a_pagarPos{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .generarComprobante{
+    font-size: 35px;
+    font-weight: bold;
+  }
+  .items{
+    height: 1090px;
+  }}     
+@media (min-width: 1500px) {
+  .imgListaProducto{
+    width: 150px;
+    height: 150px;
+  }
+  #listaProductos{
+    height: 1100px;
+  }
+  .total_a_pagarPos{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .generarComprobante{
+    font-size: 35px;
+    font-weight: bold;
+  }
+  .items{
+    height: 1090px;
+  }
 }
 
 </style>
@@ -290,7 +365,7 @@
                 <div class="panel-heading" >
                     <div class="panel-title">COMPLETE DATOS DEL COMPROBANTE</div>                        
                 </div>
-                <div class="panel-body" style="height: 650px;">                     
+                <div class="panel-body items">                     
                     <div class="form-group" style="padding-top:20px;">    
                         <div class="col-md-12 form-inline col-lg-12">                            
                              <select class="form-control" name="operacion" id="operacion" style="display: none;">
