@@ -61,8 +61,8 @@
 }}
 @media (min-width: 1200px) {
   .imgListaProducto{
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
   }
   #listaProductos{
     height: 350px;
@@ -86,30 +86,30 @@
 #invoice-item .table input[type='number'] {
   width: 40px;
 }
-#invoice-item-head thead tr th {
+#tabla thead tr th {
   font-size: 1.2rem;
   padding: 3px;
 }
-#invoice-item-head thead tr {
+#tabla thead tr {
   background-color: #f4f4f4;
 }
-#invoice-item-head thead tr th:nth-child(1) {
+#tabla thead tr th:nth-child(1) {
   width: 50px;
   text-align: center;
 }
-#invoice-item-head thead tr th:nth-child(2) {
+#tabla thead tr th:nth-child(2) {
   width: 150px;
   text-align: center;
 }
-#invoice-item-head thead tr th:nth-child(3) {
+#tabla thead tr th:nth-child(3) {
   width: 50px;
   text-align: right;
 }
-#invoice-item-head thead tr th:nth-child(4) {
+#tabla thead tr th:nth-child(4) {
   width: 70px;
   text-align: right;
 }
-#invoice-item-head thead tr th:nth-child(5) {
+#tabla thead tr th:nth-child(5) {
   width: 15px;
   text-align: left;
 }
@@ -185,7 +185,7 @@
     height: 150px;
   }
   #listaProductos{
-    height: 700px;
+    height: 1000px;
   }
   .total_a_pagarPos{
     font-size: 50px;
@@ -196,9 +196,8 @@
     font-weight: bold;
   }
   .items{
-    height: 700px; 
+    height: 1000px; 
 }
-
 /* CSS ITEMS */
 #invoice-item {
   position: relative;

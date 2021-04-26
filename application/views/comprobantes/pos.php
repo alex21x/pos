@@ -271,7 +271,7 @@
                     <div class="panel-title">COMPLETE DATOS DEL COMPROBANTE</div>                        
                 </div>
                 <div class="panel-body items">                     
-                    <div class="form-group" style="padding-top:20px;">    
+                    <div class="form-group">    
                         <div class="col-md-12 form-inline col-lg-12">                            
                              <select class="form-control" name="operacion" id="operacion" style="display: none;">
                                 <?php if($adjunto_estado!=0){ ?>
@@ -341,6 +341,7 @@
                                         <tbody>                                                      
                                         </tbody>                    
                                         </table>   
+                                        <div style="display: none">
                                     <button type="button" id="agrega" class="btn btn-primary btn-sm">Agregar Item</button>
                                     <button type="button" id="agrega_sin" onclick="agregar_fila_sin_stock()" class="btn btn-primary btn-sm" style="background: #E67E22;border:0;">Agregar sin stock</button>
                                     <button type="button" id="btn_buscar_producto" class="btn btn-info btn-sm"  data-toggle="modal" data-target="#myModalProducto" data-keyboard='false' data-backdrop='static'>Buscar Producto</button>
@@ -861,7 +862,7 @@
         function agregarFila(){    
             var fila = '<tr class="cont-item" class="invoice-item">';
 
-             fila += '<td>&nbsp;&nbsp;&nbsp;&nbsp;\
+             fila += '<td class="product-quantity">&nbsp;&nbsp;&nbsp;&nbsp;\
                                 <button type="button" class="btn btn-xs btn-up addItem">\
                                   <span class="glyphicon glyphicon-triangle-top"></span>\
                                 </button>\
