@@ -85,7 +85,7 @@
     height: 150px;
   }
   #listaProductos{
-    height: 1100px;
+    height: 650px;
   }
   .total_a_pagarPos{
     font-size: 50px;
@@ -96,7 +96,7 @@
     font-weight: bold;
   }
   .items{
-    height: 1090px; 
+    height: 650px; 
 }}
 
 </style>
