@@ -58,8 +58,7 @@
   }
   .items{
     height: 650px;  
-}}      
-
+}}
 @media (min-width: 1200px) {
   .imgListaProducto{
   width: 150px;
