@@ -15,7 +15,10 @@
   .generarComprobante{
     font-size: 35px;
     font-weight: bold;
-  }}    
+  }
+  .items{
+    height: 650px;  
+}}   
 
 @media (min-width: 768px) {
   .imgListaProducto{
@@ -33,7 +36,9 @@
     font-size: 35px;
     font-weight: bold;
   }
-}
+  .items{
+    height: 650px;  
+}}
 
 @media (min-width: 992px) {
   .imgListaProducto{
@@ -91,9 +96,8 @@
     font-weight: bold;
   }
   .items{
-    height: 1090px;
-  }
-}
+    height: 1090px; 
+}}
 
 </style>
 <script type="text/javascript">  
