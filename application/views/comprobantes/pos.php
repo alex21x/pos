@@ -52,17 +52,16 @@
     font-weight: bold;
   }
   .items{
-    height: 650px;
-  }
-}      
+    height: 650px;  
+}}      
 
 @media (min-width: 1200px) {
- .imgListaProducto{
-    width: 150px;
-    height: 150px;
+  .imgListaProducto{
+  width: 150px;
+  height: 150px;
   }
   #listaProductos{
-    height: 1100px;
+    height: 650px;
   }
   .total_a_pagarPos{
     font-size: 50px;
@@ -73,8 +72,8 @@
     font-weight: bold;
   }
   .items{
-    height: 1090px;
-  }}     
+    height: 650px;  
+}}      
 @media (min-width: 1500px) {
   .imgListaProducto{
     width: 150px;
