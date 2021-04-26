@@ -50,7 +50,11 @@
   .generarComprobante{
     font-size: 35px;
     font-weight: bold;
-}}      
+  }
+  .items{
+    height: 650px;
+  }
+}      
 
 @media (min-width: 1200px) {
  .imgListaProducto{
