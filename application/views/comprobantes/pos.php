@@ -46,14 +46,15 @@
 
      //LECTOR DE CODIGO DE BARRAS ALEXANDER FERNANDEZ 10-11-2020      
     function agregarItem(productoId,qty,stock,blur){
-        
+
+      console.log(productoId+'--'+qty+'--'+stock+'--'+blur);
         var qty = qty;
         var cantidad_1 = 0;
         var repetidos = 0;
         var ele = '';
         var itemListHeight = '';
 
-         if(stock <= 0) {//PRODUCTO SIN SOTCK                                               
+         if(stock <= 0) {//PRODUCTO SIN SOTCK
                   cmp.playSound('error.mp3');
                   cantidad_1 = 1;
                   toast('error', 1500, 'Producto sin Stock!');
@@ -72,26 +73,25 @@
                 //if ((qty > stock || $scope.itemQuantity >= stock)) {                            
               if(codProducto == productoId){
                 var cantidad =  $(this).find('#cantidad').val();
-                var ele = $(this);
-
-                //console.log($(this));
+                var ele = $(this);                
+                //console.log($(this));                
                 prevCantidad = parseFloat(cantidad) + parseFloat(qty);
                 if(qty > stock || prevCantidad > stock) {                                                
                   cmp.playSound('error.mp3');
-                  cantidad_1 = cantidad;                  
-                  toast('error', 1500, 'Producto sin Stock!');
+                  cantidad_1 = cantidad;                                    
+                  toast('error', 1500, 'Producto sin Stock!');                  
                   $(this).find('#cantidad').val(stock);
                   var parent = $(this);
                   cmp.calcular(parent);                
                   //window.toastr.error("This product is out of stock!", "Warning!");
                   return false;                  
                 }
-                  //cantidad++;
+                  //cantidad++;                  
                   if(blur == 1) qty--;
                   cantidad = parseFloat(cantidad) + parseFloat(qty);
                   $(this).find('#cantidad').val(cantidad);
                   repetidos++;
-                  if(blur != 1)cmp.playSound('access.mp3');
+                  if(blur != 1)cmp.playSound('access.mp3');                  
                   $('#producto').val('');
                   $('#producto').focus();              
 
@@ -138,6 +138,8 @@
                 },function(data){               
                 
                 var data_item = '<input class="val-descrip"  type="hidden" value="'+ data.prod_id + '" name = "item_id[]" id = "item_id" >';
+
+                console.log(data_item);
                 _item.find('#data_item').html(data_item);                
                 _item.find('#descripcion').attr("readonly",true);
                 _item.find('.descripcion-item').val(data.prod_nombre);
@@ -145,18 +147,7 @@
                 //_item.find('#codBarra').val(bar);
                 _item.find('.importe').val(data.prod_precio_publico);
                 _item.find('.importeCosto').val(data.prod_precio_compra);
-
-                //PRESENTACION PRODUCTO - ALEXANDER FERNANDEZ 27-10-2020
-                $.ajax({
-                    url: '<?= base_url();?>index.php/productos/selectPresentacionVenta/'+data.prod_id,
-                    dataType: 'HTML',
-                    method: 'GET',
-                    success: function(data){
-                        _item.find('#presentacion').append(data);                        
-                        presentacion(parent);
-                    }
-                });
-
+                
                 $('#producto').val('');
                 $('#producto').focus();                                                                                                      
                 var parent = _item.find('.descripcion-item').parents().parents().get(0);                             
@@ -200,7 +191,7 @@
               var rowProducto = $("#rowProducto").val();
               var codProducto = $("#codProducto").val();              
               var stockProducto = $("#stockProducto").val();
-              if(rowProducto == 1){
+              if(rowProducto == 1){                
                 agregarItem(codProducto,1,stockProducto);
               }
           }
@@ -215,22 +206,22 @@
           method: 'POST',
           dataType: 'JSON',
           data: {productoId : productoId},
-          success: function(response){              
+          success: function(response){                   
                 agregarItem(response.prod_id,1,response.prod_stock,blur);
           }
       })
      }     
 
-     $(document).on('click','.addItem',function(){
-        var productoId = $(this).parent().parent().find('#item_id').val();
+     $(document).on('click','.addItem',function(){      
+        var productoId = $(this).parent().parent().parent().find('#item_id').val();
         //var cantidad = $(this).parent().parent().find('#cantidad').val();
         
         addItemPos(productoId,0);
      });
 
      $(document).on('blur','.cantidad',function(){
-        var productoId = $(this).parent().parent().find('#item_id').val();
-        var cantidad = $(this).parent().parent().find('#cantidad').val();        
+        var productoId = $(this).parent().parent().parent().find('#item_id').val();
+        var cantidad = $(this).parent().parent().parent().find('#cantidad').val();        
         addItemPos(productoId,1);
      });
 
@@ -254,7 +245,7 @@
 
 <div class="grid-container">
   <div class="item1">Header</div>
-  <div class="item2">Menu</div>
+  <div class="item2"><button href="#" id="total_a_pagarPos" name="total_a_pagarPos" class="btn btn-info btn-block total_a_pagarPos"></button></div>
   <div class="item3">
     
 
@@ -272,10 +263,8 @@
   <div class="row">
     <div class="col-xs-12 col-md-12 col-lg-12">
       <input type="text" class="form-control" name="producto" id="producto" placeholder="BUSCAR PRODUCTO"> 
-        <div id="listaProductos"></div>
-      <button href="#" id="total_a_pagarPos" name="total_a_pagarPos" class="btn btn-info btn-block total_a_pagarPos"></button>
+        <div id="listaProductos"></div>      
     </div>
-
   </div>  
 </div>  
 
@@ -388,17 +377,8 @@
     </div> 
     </form>
     </div>
-</div> 
-
-
-
-
+</div>
   </div></div>
-
-
-
-
-
 
   <script src="<?PHP echo base_url(); ?>assets/js/libComprobante.js"></script>
 <script src="<?PHP echo base_url(); ?>assets/js/comprobante.js"></script>
@@ -890,7 +870,7 @@
         }
         //FUNCION AGREGAR FILA
         function agregarFila(){    
-            var fila = '<tr class="cont-item" class="invoice-item">';
+            var fila = '<tr class="invoice-item">';
 
                 /*fila += '<td class="product-quantity">&nbsp;&nbsp;&nbsp;&nbsp;\
                                 <button type="button" class="btn btn-xs btn-up addItem">\
@@ -911,20 +891,20 @@
 
                 fila += '<td class="product-quantity">\
                                     <div class="quantity float-none m-0">\
-                                    <input type="button" class="minus col-md-1 text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="-">\
-                                    <input type="text" class="input-text qty text" title="Qty" value="1" name="quantity" min="1" step="1">\
-                                    <input type="button" class="plus text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="+"></div>\
+                                    <input type="button" class="minus col-md-1 text-color-hover-light bg-color-hover-primary border-color-hover-primary decreaseItem" value="-">\
+                                    <input type="text" class="input-text qty text cantidad" title="Qty" value="1" name="cantidad[]" id="cantidad">\
+                                    <input type="button" class="plus text-color-hover-light bg-color-hover-primary border-color-hover-primary addItem" value="+"></div>\
                         </td>';
                                
-                fila += '<td colspan="2" class="col-sm-4" style="border:0;">'+                        
-                        '<input class="form-control descripcion-item" rows="2" id="descripcion" name="descripcion[]" required="">'+                        
+                fila += '<td colspan="2">'+                        
+                        '<input class="descripcion-item" rows="2" id="descripcion" name="descripcion[]" required="">'+                        
                         '<div id="data_item"><input type="hidden" name="item_id[]" id="item_id"></div></td>';
 
                 fila += '<td style="border:0;display: none;"><input type="text" class="form-control" readonly id="medida" name="medida[]"></td>' 
                 //fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
                
 
-                fila += '<td class="col-sm-2" style="border:0;display:none">'+
+                fila += '<td class="col-sm-2" style="display:none">'+
                         '<select class="form-control tipo_igv" id="tipo_igv" name="tipo_igv[]">';
                           <?php foreach($tipo_igv as $value):?>
                                 fila += '<option value = "<?PHP echo $value['id'];?>"><?PHP echo $value['tipo_igv']?></option>';
@@ -946,10 +926,10 @@
                     fila += '<td style="display:none;"><input type="text" id="desc_uni"  name="descuento[]" class="form-control"></td>';
                 <?php endif ?>
 
-                fila += '<td class="product-subtotal">'+                        
+                fila += '<td>'+
                         '<input type="hidden" id="codBarra" name="codBarra[]" class="form-control">'+
                         '<input type="hidden" id="subtotal" name="subtotal[]" class="form-control" readonly="">'+
-                        '<input type="text" id="total" name="total[]" class="form-control totalp" value ="0.00">'+
+                        '<input type="text" id="total" name="total[]" class="form-control total" value ="0.00">'+
                         '<input type="hidden" id="totalVenta" name="totalVenta[]" class="form-control totalVenta" value ="0.00" readonly="">'+
                         '<input type="hidden" id="totalCosto" name="totalCosto[]" class="form-control totalCosto" value ="0.00" readonly=""></td>';
                 fila += '<td class="eliminar" style="border:0;">'+
@@ -1119,7 +1099,7 @@
                         fila += '<td style="border:0;"><input type="number" id="importe" name="importe[]" required="" class="form-control importe" value="'+ value.importe +'"></td>';
                         fila += '<input type="hidden" id="igv"  name="igv[]" class="form-control"  readonly="" value="'+ value.igv +'">';
                         <?php if ($configuracion->descuento): ?>                    
-                            fila += '<td><input type="text" id="desc_uni"  name="descuento[]" class="form-control"   ></td>';
+                            fila += '<td><input type="text" id="desc_uni"  name="descuento[]" class="form-control"></td>';
                         <?php else: ?>
                             fila += '<td style="display:none;"><input type="text" id="desc_uni"  name="descuento[]" class="form-control"   ></td>';
                         <?php endif ?>
@@ -1244,7 +1224,7 @@
         $("#myModalNuevoCliente").load("<?= base_url()?>index.php/clientes/modal_nuevoCliente",{});
     });
     //CARGAR MODAL PAGO PAGO_MONTO 14-10-2020 
-    $("#guardar").on('click',function(e){      
+    $("#guardar").on('click',function(e){            
         e.preventDefault();
         $("#myModalPagoMonto").load("<?= base_url()?>index.php/comprobantes/modal_pagoMonto",{});
     });
@@ -1290,6 +1270,3 @@
     }
     $('#producto').focus();
 </script>
-  
-
-

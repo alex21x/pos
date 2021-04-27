@@ -10,32 +10,32 @@
     }
 
     comprobante.prototype.reCalcular = function(parent){
-            var producto = $(parent).children().children().children('#item_id').val();
-            var importe  = $(parent).children().children('#importe').val();
-            var total  = $(parent).children().children('#total').val();
+            var producto = $(parent).find('#item_id').val();
+            var importe  = $(parent).find('#importe').val();
+            var total    = $(parent).find('#total').val();
 
-            var importeCosto  = ($(parent).children().children().children('#item_id').val() != 0) ? $(parent).children().children('#importeCosto').val() : importe;            
-            var cantidad = $(parent).children().children('#cantidad').val();
-            var tipoIgv  = $(parent).children().children('#tipo_igv').val();
+            var importeCosto  = ($(parent).find('#item_id').val() != 0) ? $(parent).find('#importeCosto').val() : importe;         
+            var cantidad = $(parent).find('#cantidad').val();
+            var tipoIgv  = $(parent).find('#tipo_igv').val();
             var igv      = $("#igvActivo").val();            
 
-            var desc = ($(parent).children().children('#desc_uni').val() != '')?parseFloat($(parent).children().children('#desc_uni').val()):0.00; 
+            var desc = ($(parent).find('#desc_uni').val() != '')?parseFloat($(parent).find('#desc_uni').val()):0.00; 
 
-            $(parent).children().children('#importe').val((total/cantidad).toFixed(2));            
-            var parent = $(this).parents().parents().get(0);                    
+            $(parent).find('#importe').val((total/cantidad).toFixed(2));
+            var parent = $(this).parents().parents().get(0);        
             cmp.calcular(parent);               
     }
     
    comprobante.prototype.calcular = function(parent){
-            var producto = $(parent).children().children().children('#item_id').val();
-            var importe  = $(parent).children().children('#importe').val();
+            var producto = $(parent).find('#item_id').val();
+            var importe  = $(parent).find('#importe').val();
 
-            var importeCosto  = ($(parent).children().children().children('#item_id').val() != 0) ? $(parent).children().children('#importeCosto').val() : importe;            
-            var cantidad = $(parent).children().children('#cantidad').val();
-            var tipoIgv  = $(parent).children().children('#tipo_igv').val();
+            var importeCosto  = ($(parent).find('#item_id').val() != 0) ? $(parent).find('#importeCosto').val() : importe;
+            var cantidad = $(parent).find('#cantidad').val();
+            var tipoIgv  = $(parent).find('#tipo_igv').val();
             var igv      = $("#igvActivo").val();            
 
-            var desc = ($(parent).children().children('#desc_uni').val() != '')?parseFloat($(parent).children().children('#desc_uni').val()):0.00;
+            var desc = ($(parent).find('#desc_uni').val() != '')?parseFloat($(parent).find('#desc_uni').val()):0.00;
 
             if(tipoIgv < 8){
 

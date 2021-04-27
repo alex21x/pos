@@ -6,9 +6,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
          <link rel="shortcut icon" type="image/x-icon" href="<?PHP echo base_url();?>images/siti01.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1">                    
-        <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/themes-smoothness-jquery-ui.css">
+        <!--<link rel="stylesheet" href="<?PHP echo base_url();?>assets/bootstrap/css/bootstrap.min.css">-->
+        <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/themes-smoothness-jquery-ui.css">        
+        <link rel="stylesheet" href="<?PHP echo base_url()?>assets/plugins/chosen/chosen.css">
+        <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/jquery.toast.min.css">
         <link rel="stylesheet" href="<?PHP echo base_url();?>assets/css/pos.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="<?PHP echo base_url();?>assets/js/jquery-ui-1.11.0.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>                
+        <script src="<?PHP echo base_url(); ?>assets/js/jquery-ui-1.11.0.js"></script>
+        <script src="<?PHP echo base_url(); ?>assets/js/function_dashboard.js"></script>
+        <script src="<?PHP echo base_url()?>assets/plugins/chosen/chosen.jquery.js"></script>        
+        <script src="<?PHP echo base_url(); ?>assets/js/jquery.toast.min.js"></script>
     </head>
    

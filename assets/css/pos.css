@@ -2,7 +2,10 @@
   width: 700px;
   height: 450px;  
 }
-
+.item4{
+  width: 550px;
+  height: 450px;  
+}
 .listaProductosPos img{
   height: 90px;
   width: 90px;
@@ -10,12 +13,22 @@
 .listaProductosPos{
   font-size: 10px;
 }
-
-.item4{
-  width: 800px;
-  height: 450px;  
+.total_a_pagarPos{
+  width: 600px;
+  height: 30px;
+  font-size: 20px;
+  padding: 0;
+  font-weight: bold;
 }
 
+.generarComprobante{
+  width: 600px;
+  height: 30px;
+  font-size: 20px;
+  padding: 0;
+  font-weight: bold;
+
+}
 
 @font-face {
   font-family: 'star';
@@ -745,9 +758,10 @@ html.lightbox-beforeclose .quick-view {
 /* Shop Finish Buy Steps Nav */
 /* Shop Table */
 .shop_table {
-  width: 100%;
+  width: 550px;
   margin: 0;
   text-align: left;
+  overflow-y: auto;
 }
 
 .shop_table th {
@@ -756,7 +770,7 @@ html.lightbox-beforeclose .quick-view {
 }
 
 #invoice-item-list .shop_table input[type='number'] {
-  width: 40px;
+  width: 80px;
 }
 
 #invoice-item-list table tbody td.product-quantity {
@@ -768,8 +782,8 @@ html.lightbox-beforeclose .quick-view {
     width: 150px;
 }
 
-#invoice-item-list .shop_table .product-subtotal {
-    width: 20px;
+#invoice-item-list .shop_table .total {
+    width: 80px;
     text-align: right;
 }
 
@@ -780,7 +794,7 @@ html.lightbox-beforeclose .quick-view {
 }
 
 #invoice-item-list .shop_table thead tr th:nth-child(9) {
-    width: 70px;
+    width: 170px;
     text-align: right;
 }
 

@@ -47,7 +47,6 @@
     margin: 10px auto 20px auto;        
 }}   
 </style>
-
 <form id="formPagoMonto">
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="modal-dialog modal-lg modal-dialog-pagoMonto" role="document">
@@ -675,5 +674,9 @@
         $('#operacion_gratuita').on('change',function(){
             operacion_gratuita();
         });   
+
+        alert(1)
    
 </script>
+
+

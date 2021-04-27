@@ -103,7 +103,8 @@ class Comprobantes extends CI_Controller {
         $data['rowIcbPerActivo'] = $this->icbper_model->selectIcbPerActivo();
 
         $this->load->view('templates/header_pos');
-        $this->load->view('comprobantes/pos', $data);        
+        $this->load->view('comprobantes/pos', $data);                
+        $this->load->view('templates/footer_pos');
     }
 
 
@@ -215,7 +216,6 @@ class Comprobantes extends CI_Controller {
 
     //ALEXANDER FERNANDEZ 14-10-2020
     public function modal_pagoMonto(){
-
         $data['empresa'] = $this->empresas_model->select(1);  
         $data['monedas'] = $this->monedas_model->select();
         $data['empresas'] = $this->empresas_model->select();        
@@ -225,7 +225,7 @@ class Comprobantes extends CI_Controller {
         $data['tipo_pagos'] =  $this->tipo_pagos_model->select();
         $data['tipo_ncreditos'] = $this->tipo_ncreditos_model->select('', '', '', 0);
         $data['tipo_ndebitos'] = $this->tipo_ndebitos_model->select('', '', '', 0);
-        $data['configuracion'] = $this->db->from('comprobantes_ventas')->get()->row();
+        $data['configuracion'] = $this->db->from('comprobantes_ventas')->get()->row();        
 
         echo $this->load->view('comprobantes/modal_pagoMonto',$data);
     }
