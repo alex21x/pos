@@ -102,9 +102,8 @@ class Comprobantes extends CI_Controller {
         $data['rowIgvActivo'] = $this->igv_model->selectIgvActivo();
         $data['rowIcbPerActivo'] = $this->icbper_model->selectIcbPerActivo();
 
-        $this->accesos_model->menuGeneral();
-        $this->load->view('comprobantes/pos', $data);
-        $this->load->view('templates/footer');
+        $this->load->view('templates/header_pos');
+        $this->load->view('comprobantes/pos', $data);        
     }
 
 
@@ -122,7 +121,7 @@ class Comprobantes extends CI_Controller {
 
 
         //var_dump($rsProductos);exit;
-        $listaProductosPos  = '<br><br><br><table class="table table bordered">
+        $listaProductosPos  = '<br><table class="table table bordered">
                                     <input type="hidden" name="rowProducto" id="rowProducto" value="'.$rowProductos.'">
                                     <input type="hidden" name="codProducto" id="codProducto" value="'.$rsProductos['rsProductos'][0]->prod_id.'">
                                     <input type="hidden" name="stockProducto" id="stockProducto" value="'.$rsProductos['rsProductos'][0]->prod_stock.'">';

@@ -1,3 +1,28 @@
+<style type="text/css">  
+    .item1 { grid-area: header; }
+    .item2 { grid-area: menu; }
+    .item3 { grid-area: main; }
+    .item4 { grid-area: right; }
+    .item5 { grid-area: footer; }
+
+    .grid-container {
+      display: grid;
+      grid-template-areas:
+        'header header header header header header'
+        'main main main right right right'
+        'menu menu menu right right right';
+      grid-gap: 4px;
+      background-color: #2196F3;
+      padding: 4px;
+    }
+
+    .grid-container > div {
+      background-color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+      padding: 20px 0;
+      font-size: 20px;
+    }
+</style>
 <script type="text/javascript">  
   /* DETALLE DE CAMBIO      / AUTOR               / FECHA
      *-----------------------------------------------------------   
@@ -18,7 +43,6 @@
         listaProductos(page);
 
     });
-
 
      //LECTOR DE CODIGO DE BARRAS ALEXANDER FERNANDEZ 10-11-2020      
     function agregarItem(productoId,qty,stock,blur){
@@ -227,22 +251,23 @@
 
 </script>
 
-<!-- COMPROBANTE CSS -->
-<link rel="stylesheet" href="<?PHP echo base_url()?>assets/css/comprobante.css">
-<div id="mensaje"></div>
-     
-<div class="container-fluid">
-<div class="col-xs-6 col-md-6 col-lg-6">
+
+<div class="grid-container">
+  <div class="item1">Header</div>
+  <div class="item2">Menu</div>
+  <div class="item3">
+    
+
+    <div class="col-xs-6 col-md-6 col-lg-6">
   <div class="row">
-    <div class="col-xs-4 col-md-offset-8 col-lg-4">
+    
       <label for="prod_categoria">Categoria</label>
       <select class="form-control col-lg-6" id="categoria" name="prod_categoria">
                   <option value="">Seleccione</option>
                   <?php foreach ($categoria as $value): ?>
                     <option value="<?php echo $value->cat_id;?>" <?php if($value->cat_id == $producto->prod_categoria_id):?> selected <?php endif?> > <?php echo $value->cat_nombre;?></option>  
                   <?php endforeach ?>                              
-      </select>
-    </div><br><br><br><br><br>
+      </select>    
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-12 col-lg-12">
@@ -253,7 +278,12 @@
 
   </div>  
 </div>  
-<div class="col-xs-6 col-md-6 col-lg-6">
+
+  </div>
+  <div class="item4">
+<!-- COMPROBANTE CSS -->
+<link rel="stylesheet" href="<?PHP echo base_url()?>assets/css/comprobante.css">     
+<div class="col-xs-12 col-md-12 col-lg-12">
 <input type="hidden" id="auto" value="<?php echo $configuracion->facturador_auto;?>">
 
 <form id="formComprobante" class="form-horizontal" autocomplete="off">
@@ -314,19 +344,18 @@
                         </div>                                                                              
                     </div>  
 
-                    <div class="row" id="valida">
-                                <div class="col-xs-12 col-md-12 col-lg-12" id="invoice-item-list">
-                                    <table id="tabla" class="table" border="0">
+                    <div class="shop" id="valida">
+                                <div id="invoice-item-list" class="products">
+                                    <table id="tabla" class="table shop_table">
                                         <thead>
                                             <tr style="background-color: #848484;color: #FFF">
-                                                <th class="col-sm-1">Cant.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                                                <th class="col-sm-1" style="display: none;">Unid. Medida</th>
-                                                <!--<th class="col-sm-1">Serie .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>-->
-                                                
-                                                <th colspan="2" class="col-sm-2">Descripcion</th>
-                                                <th class="col-sm-3">Tipo Igv&nbsp;&nbsp;</th>
-                                                <th class="col-sm-1">Precio&nbsp;&nbsp;</th> 
-                                                <th class="col-sm-1">&nbsp;</th>    
+                                                <th>Cantidad</th>
+                                                <th style="display: none;">Unid. Medida</th>
+                                                <!--<th class="col-sm-1">Serie .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>-->                                                
+                                                <th colspan="2">Descripcion</th>
+                                                <th style="display: none">Tipo Igv&nbsp;&nbsp;</th>
+                                                <th>Precio&nbsp;&nbsp;</th> 
+                                                <th>&nbsp;</th>    
                                                 <!--<th>Sub Total</th>  -->                                                
                                                 <?php
                                                  if ($configuracion->descuento) {
@@ -334,7 +363,7 @@
                                                  } else {
                                                     echo "<th style='display:none;'> Descuento</th>";
                                                  }?>                                                                          
-                                                <th class="col-sm-2">Total</th>
+                                                <th>Total</th>
                                                 <th></th>  
                                             </tr>
                                         </thead>                    
@@ -346,18 +375,11 @@
                                     <button type="button" id="agrega_sin" onclick="agregar_fila_sin_stock()" class="btn btn-primary btn-sm" style="background: #E67E22;border:0;">Agregar sin stock</button>
                                     <button type="button" id="btn_buscar_producto" class="btn btn-info btn-sm"  data-toggle="modal" data-target="#myModalProducto" data-keyboard='false' data-backdrop='static'>Buscar Producto</button>
                                 </div> 
-                            </div>            
-                            <div id="mostrar"></div>
-                            <div id="uu"></div>
-
+                            </div>                                        
                 </div>        
             </div>            
         </div>
     </div>
-
-
-
-
     <div class="row" style="padding-top:20px;">
         <div class="col-md-12 col-lg-12">                
                     <input type="hidden" name="ajaxId" id="ajaxId" value="<?= $ajaxId;?>"/>
@@ -370,7 +392,15 @@
 
 
 
-<script src="<?PHP echo base_url(); ?>assets/js/libComprobante.js"></script>
+
+  </div></div>
+
+
+
+
+
+
+  <script src="<?PHP echo base_url(); ?>assets/js/libComprobante.js"></script>
 <script src="<?PHP echo base_url(); ?>assets/js/comprobante.js"></script>
 <script src="<?PHP echo base_url(); ?>assets/js/validar.js"></script>
 
@@ -862,7 +892,7 @@
         function agregarFila(){    
             var fila = '<tr class="cont-item" class="invoice-item">';
 
-             fila += '<td class="product-quantity">&nbsp;&nbsp;&nbsp;&nbsp;\
+                /*fila += '<td class="product-quantity">&nbsp;&nbsp;&nbsp;&nbsp;\
                                 <button type="button" class="btn btn-xs btn-up addItem">\
                                   <span class="glyphicon glyphicon-triangle-top"></span>\
                                 </button>\
@@ -870,7 +900,21 @@
                         <button type="button" class="btn btn-xs btn-down decreaseItem">\
                               <span class="glyphicon glyphicon-triangle-bottom"></span>\
                             </button>\
-                        </td>';                
+                        </td>';*/
+                /*fila += '<td class="product-quantity">&nbsp;&nbsp;&nbsp;&nbsp;\
+                                <div class="input-group">\
+                                    <span class="input-group-addon">$</span>\
+                                    <input type="text" class="form-control">\
+                                    <span class="input-group-addon">.00</span>\
+                                  </div>\
+                        </td>';*/
+
+                fila += '<td class="product-quantity">\
+                                    <div class="quantity float-none m-0">\
+                                    <input type="button" class="minus col-md-1 text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="-">\
+                                    <input type="text" class="input-text qty text" title="Qty" value="1" name="quantity" min="1" step="1">\
+                                    <input type="button" class="plus text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="+"></div>\
+                        </td>';
                                
                 fila += '<td colspan="2" class="col-sm-4" style="border:0;">'+                        
                         '<input class="form-control descripcion-item" rows="2" id="descripcion" name="descripcion[]" required="">'+                        
@@ -880,7 +924,7 @@
                 //fila += '<td><input type="text" id="serie_detalle" name="serie_detalle[]"  class="form-control serie_detalle"></td>';
                
 
-                fila += '<td class="col-sm-2" style="border:0;">'+
+                fila += '<td class="col-sm-2" style="border:0;display:none">'+
                         '<select class="form-control tipo_igv" id="tipo_igv" name="tipo_igv[]">';
                           <?php foreach($tipo_igv as $value):?>
                                 fila += '<option value = "<?PHP echo $value['id'];?>"><?PHP echo $value['tipo_igv']?></option>';
@@ -891,7 +935,7 @@
                         '<input type="number" id="importe" name="importe[]" required="" class="form-control importe" >'+
                         '<input type="hidden" id="importeCosto" name="importeCosto[]" required="" class="form-control importeCosto" ></td>';
                 //fila += '<td></td>';
-                fila += '<td class="precios">'+
+                fila += '<td class="precios price">'+
                         '<span class="glyphicon glyphicon-new-window btn_agregar_precio" id="btn_1" data-toggle="modal" data-target="#myModalPrecio"></span>'+
                           '<input type="hidden" id="igv"  name="igv[]" class="form-control"  readonly=""></td>';                
                 fila += '<input type="hidden" id="icbper"  name="icbper[]" class="form-control"  readonly="">';
@@ -902,7 +946,7 @@
                     fila += '<td style="display:none;"><input type="text" id="desc_uni"  name="descuento[]" class="form-control"></td>';
                 <?php endif ?>
 
-                fila += '<td style="border:0;">'+                        
+                fila += '<td class="product-subtotal">'+                        
                         '<input type="hidden" id="codBarra" name="codBarra[]" class="form-control">'+
                         '<input type="hidden" id="subtotal" name="subtotal[]" class="form-control" readonly="">'+
                         '<input type="text" id="total" name="total[]" class="form-control totalp" value ="0.00">'+
@@ -1243,7 +1287,9 @@
                     }
                 });
             });
-    }  
-
+    }
     $('#producto').focus();
 </script>
+  
+
+
